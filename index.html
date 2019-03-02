@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>three.js webgl - animation authoring</title>
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0"
+    />
+    <style>
+      body {
+        margin: 0px;
+        background-color: #000000;
+        color: #fff;
+        font-family: Monospace;
+        font-size: 15px;
+        line-height: 30px;
+        overflow: hidden;
+      }
+      #info {
+        text-align: center;
+        position: absolute;
+        top: 0px;
+        width: 100%;
+        padding: 15px;
+        z-index: 100;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="./three.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+      var socket = io();
+      var scene = new THREE.Scene();
+      var camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      );
+
+      var renderer = new THREE.WebGLRenderer();
+      renderer.setSize(window.innerWidth, window.innerHeight);
+      document.body.appendChild(renderer.domElement);
+
+      var geometry = new THREE.BoxGeometry(1, 1, 1);
+      var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+      var cube = new THREE.Mesh(geometry, material);
+      scene.add(cube);
+
+      camera.position.z = 10;
+      // camera.position.y = 1.7;
+      // camera.position.x = 1.7;
+
+      socket.on("z", function(pos) {
+        const val = 900 - pos.z;
+        // 9 == 4..16
+        // 500 == 400..900
+        const r = (val * 13) / 500;
+        console.log(pos.z, r);
+        camera.position.z = 4 + (16 - r);
+      });
+
+      var animate = function() {
+        requestAnimationFrame(animate);
+
+        cube.rotation.x += 0.01;
+        cube.rotation.y += 0.01;
+
+        renderer.render(scene, camera);
+      };
+
+      animate();
+    </script>
+  </body>
+</html>
