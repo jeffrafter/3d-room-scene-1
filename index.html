@@ -54,20 +54,37 @@
       // camera.position.y = 1.7;
       // camera.position.x = 1.7;
 
-      socket.on("z", function(pos) {
-        const pointDist = 1023 - pos.z;
+      socket.on("pos", function(pos) {
+        const CAMERA_WIDTH_PIXELS = 1024
+        const CAMERA_HEIGHT_PIXELS = 768
+        const CAMERA_ABOVE_SCREEN = false
+        const { x, y, z } = pos
+
+        const pointDist = 1023 - z;
 
         let dotDistanceInMM = 8.5 * 25.4; //width of the wii sensor bar
-        let screenHeightinMM = (20.0 * 25.4) / 2.0;
-        let radiansPerPixel = Math.PI / 4.0 / 1024.0; //45 degree field of view with a 1024x768 camera
+        let screenHeightinMM = (20.0 * 25.4) / 2.0;// probably change this
+        let radiansPerPixel = Math.PI / 4.0 / CAMERA_WIDTH_PIXELS; //45 degree field of view with a 1024x768 camera
         let movementScaling = 1.0;
 
         let angle = (radiansPerPixel * pointDist) / 2;
 
         //in units of screen hieght since the box is a unit cube and box hieght is 1
-        headDist =
+        const headDist =
           (movementScaling * (dotDistanceInMM / 2.0 / Math.tan(angle))) /
           screenHeightinMM;
+
+        const headX = (movementScaling *  Math.Sin(radiansPerPixel * (x - CAMERA_WIDTH_PIXELS / 2)) * headDist)
+
+        const relativeVerticalAngle = (y - CAMERA_HEIGHT_PIXELS / 2) * radiansPerPixel
+
+        let headY
+        if (CAMERA_ABOVE_SCREEN) {
+          headY = 0.5 + (movementScaling * Math.Sin(relativeVerticalAngle + cameraVerticaleAngle)  *headDist)
+        } else {
+          headY = -0.5 + (movementScaling * Math.Sin(relativeVerticalAngle + cameraVerticaleAngle) * headDist)
+        }
+
 
         // const val = 900 - pos.z;
         // // 9 == 4..16
@@ -76,6 +93,8 @@
         // console.log(pos.z, r);
         // camera.position.z = 4 + (16 - r);
         // console.log(headDist);
+        camera.position.x = headX;
+        camera.position.y = headY;
         camera.position.z = headDist;
       });
 

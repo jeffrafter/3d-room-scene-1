@@ -1,22 +1,35 @@
-var app = require("express")();
-var http = require("http").Server(app);
-var io = require("socket.io")(http);
+require('dotenv').config()
+
+const app = require("express")();
+const http = require("http").Server(app);
+const io = require("socket.io")(http);
 const zReadingToFeet = require("./lib/z-reading-to-feet");
 
-const script = "/Users/njero/Code/3droom/wiiuse/build/example/wiiuseexample";
+const script = process.env.WIIUSE_EXEC_PATH;
+
+if (!script) {
+  console.log('SORRY!')
+  console.log('you must have WIIUSE_EXEC_PATH set in your .env file')
+  console.log('-------------------^^^^^^^^^------------------------')
+
+  process.exit(1)
+}
 
 // Step 1 disconnect the wii remote
 // Step 2 hit up to turn on IR sensor
 // Step 3 sense it
-var spawn = require("child_process", [], { detached: true }).spawn;
-var child = spawn(script);
+const spawn = require("child_process", [], { detached: true }).spawn;
+const child = spawn(script);
+
 child.stderr.on("data", function(data) {
-  const matches = data.toString().match(/IR z distance: (\d+\.?\d*)/);
+  const matches = data.toString().match(/IR pos: \{(\d+), (\d+), (\d+\.?\d*)\}/);
   console.log(data.toString());
   if (matches) {
-    const z = Math.round(parseFloat(matches[1], 0));
+    const x = parseInt(matches[1]);
+    const y = parseInt(matches[2]);
+    const z = Math.round(parseFloat(matches[3], 0));
     if (z > 0) {
-      io.emit("z", { z });
+      io.emit("pos", { x, y, z });
     }
   }
 });
