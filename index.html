@@ -55,12 +55,28 @@
       // camera.position.x = 1.7;
 
       socket.on("z", function(pos) {
-        const val = 900 - pos.z;
-        // 9 == 4..16
-        // 500 == 400..900
-        const r = (val * 13) / 500;
-        console.log(pos.z, r);
-        camera.position.z = 4 + (16 - r);
+        const pointDist = 1023 - pos.z;
+
+        let dotDistanceInMM = 8.5 * 25.4; //width of the wii sensor bar
+        let screenHeightinMM = (20.0 * 25.4) / 2.0;
+        let radiansPerPixel = Math.PI / 4.0 / 1024.0; //45 degree field of view with a 1024x768 camera
+        let movementScaling = 1.0;
+
+        let angle = (radiansPerPixel * pointDist) / 2;
+
+        //in units of screen hieght since the box is a unit cube and box hieght is 1
+        headDist =
+          (movementScaling * (dotDistanceInMM / 2.0 / Math.tan(angle))) /
+          screenHeightinMM;
+
+        // const val = 900 - pos.z;
+        // // 9 == 4..16
+        // // 500 == 400..900
+        // const r = (val * 13) / 500;
+        // console.log(pos.z, r);
+        // camera.position.z = 4 + (16 - r);
+        // console.log(headDist);
+        camera.position.z = headDist;
       });
 
       var animate = function() {
