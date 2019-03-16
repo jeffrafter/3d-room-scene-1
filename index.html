@@ -48,13 +48,14 @@
 
       const cubeAtts = [
         { position: { x: 0, y: 1, z: -4 }, rotation: { x: 0.01, y: 0.01 } },
+        { position: { x: -2, y: 1, z: -2 }, rotation: { x: -0.01, y: 0.001 } },
         { position: { x: 4, y: 0, z: 2 }, rotation: { x: 0.005, y: -0.005 } },
         { position: { x: -4, y: -4, z: 0 }, rotation: { x: 0.001, y: 0.001 } },
       ]
 
       const createBox = (pos) => {
         // vanishingPoint
-        const vp = { x: 0, y: 0, z: -1000 }
+        const vp = { x: pos.x, y: pos.y, z: -500 }
 
         const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
         const material = new THREE.MeshNormalMaterial();
