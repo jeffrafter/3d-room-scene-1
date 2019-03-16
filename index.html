@@ -47,22 +47,32 @@
       document.body.appendChild(renderer.domElement);
 
       const cubeAtts = [
-        { position: { x: 0, y: 0, z: -4 }, rotation: { x: 0.01, y: 0.01 } },
+        { position: { x: 0, y: 1, z: -4 }, rotation: { x: 0.01, y: 0.01 } },
         { position: { x: 4, y: 0, z: 2 }, rotation: { x: 0.005, y: -0.005 } },
         { position: { x: -4, y: -4, z: 0 }, rotation: { x: 0.001, y: 0.001 } },
       ]
 
       const createBox = (pos) => {
-        const geometry = new THREE.BoxGeometry(1, 1, 1);
+        // vanishingPoint
+        const vp = { x: 0, y: 0, z: -1000 }
+
+        const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
         const material = new THREE.MeshNormalMaterial();
-        // var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-        // var color = new THREE.Color('#433B5A')
-        // var material = THREE.MeshLambertMaterial({color: color.getHex(), wireframe: true})
-        const cube = new THREE.Mesh(geometry, material);
+        const cube = new THREE.Mesh(boxGeometry, material);
         cube.position.x = pos.x
         cube.position.y = pos.y
         cube.position.z = pos.z
         scene.add(cube);
+
+        // draw line
+        var lineMaterial = new THREE.LineBasicMaterial( { color: 0xf3f3f3 } );
+        var lineGeometry = new THREE.Geometry();
+        lineGeometry.vertices.push(new THREE.Vector3(pos.x, pos.y, pos.z) );
+        lineGeometry.vertices.push(new THREE.Vector3(vp.x, vp.y, vp.z) );
+        var line = new THREE.Line( lineGeometry, lineMaterial );
+        scene.add(line)
+
+
         return cube
       }
 
