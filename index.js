@@ -10,7 +10,11 @@ app.get("/", (req, res) => {
 });
 
 app.get("/three.min.js", (req, res) => {
-  res.sendFile(__dirname + "/three.min.js");
+  res.sendFile(__dirname + "/vendor/three.min.js");
+});
+
+app.get("/dat.gui.min.js", (req, res) => {
+  res.sendFile(__dirname + "/vendor/dat.gui.min.js");
 });
 
 io.on("connection", (socket) => {

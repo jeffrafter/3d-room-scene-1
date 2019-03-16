@@ -28,7 +28,8 @@
     </style>
   </head>
   <body>
-    <script src="./three.min.js"></script>
+    <script src="/three.min.js"></script>
+    <script src="/dat.gui.min.js"></script>
     <script src="/socket.io/socket.io.js"></script>
 
     <script>
@@ -50,9 +51,22 @@
       var cube = new THREE.Mesh(geometry, material);
       scene.add(cube);
 
-      camera.position.z = 10;
+      camera.position.z = 5;
 
       const cameraVerticaleAngle = 0; //begins assuming the camera is point straight forward
+
+      // set up dat gui doh:
+      // (example from: https://codepen.io/rachsmith/pen/qbKvdd)
+      var gui = new dat.GUI();
+      var cameraGui = gui.addFolder("camera projection");
+      cameraGui.add(camera, "fov");
+      cameraGui.open();
+
+      var cubeGui = gui.addFolder("cube position");
+      cubeGui.add(cube.position, 'x');
+      cubeGui.add(cube.position, 'y');
+      cubeGui.add(cube.position, 'z');
+      cubeGui.open();
 
       // camera.position.y = 1.7;
       // camera.position.x = 1.7;
