@@ -46,14 +46,27 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
       document.body.appendChild(renderer.domElement);
 
-      var geometry = new THREE.BoxGeometry(1, 1, 1);
-      var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-      var cube = new THREE.Mesh(geometry, material);
-      scene.add(cube);
+      const cubeAtts = [
+        { position: { x: 0, y: 0, z: 0 }, rotation: { x: 0.01, y: 0.01 } },
+      ]
+
+      const createBox = (pos) => {
+        const geometry = new THREE.BoxGeometry(1, 1, 1);
+        const material = new THREE.MeshNormalMaterial();
+        // var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        // var color = new THREE.Color('#433B5A')
+        // var material = THREE.MeshLambertMaterial({color: color.getHex(), wireframe: true})
+        const cube = new THREE.Mesh(geometry, material);
+        cube.position = pos
+        scene.add(cube);
+        return cube
+      }
+
+      const cubes = cubeAtts.map((atts) => createBox(atts.position))
 
       // something helpful
-      var axesHelper = new THREE.AxesHelper( 5 );
-      scene.add( axesHelper );
+      // var axesHelper = new THREE.AxesHelper( 5 );
+      // scene.add( axesHelper );
 
       camera.position.z = 5;
 
@@ -61,16 +74,16 @@
 
       // set up dat gui doh:
       // (example from: https://codepen.io/rachsmith/pen/qbKvdd)
-      var gui = new dat.GUI();
-      var cameraGui = gui.addFolder("camera projection");
-      cameraGui.add(camera, "fov");
-      cameraGui.open();
-
-      var cubeGui = gui.addFolder("cube position");
-      cubeGui.add(cube.position, 'x');
-      cubeGui.add(cube.position, 'y');
-      cubeGui.add(cube.position, 'z');
-      cubeGui.open();
+      // var gui = new dat.GUI();
+      // var cameraGui = gui.addFolder("camera projection");
+      // cameraGui.add(camera, "fov");
+      // cameraGui.open();
+      //
+      // var cubeGui = gui.addFolder("cube position");
+      // cubeGui.add(cube.position, 'x');
+      // cubeGui.add(cube.position, 'y');
+      // cubeGui.add(cube.position, 'z');
+      // cubeGui.open();
 
       // camera.position.y = 1.7;
       // camera.position.x = 1.7;
@@ -121,13 +134,17 @@
         camera.position.x = headX;
         camera.position.y = headY;
         camera.position.z = headDist;
+
+        // console.log(camera.position)
       });
 
       var animate = function() {
         requestAnimationFrame(animate);
 
-        cube.rotation.x += 0.01;
-        cube.rotation.y += 0.01;
+        cubes.forEach((cube, i) => {
+          cube.rotation.x += cubeAtts[i].rotation.x;
+          cube.rotation.y += cubeAtts[i].rotation.y;
+        })
 
         renderer.render(scene, camera);
       };
