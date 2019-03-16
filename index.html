@@ -51,12 +51,19 @@
       scene.add(cube);
 
       camera.position.z = 10;
+
+      const cameraVerticaleAngle = 0; //begins assuming the camera is point straight forward
+
       // camera.position.y = 1.7;
       // camera.position.x = 1.7;
 
       socket.on("pos", function(pos) {
+        // console.log('got pos')
+
+        // NOTE: this should change soon... to 560 and 420
         const CAMERA_WIDTH_PIXELS = 1024
         const CAMERA_HEIGHT_PIXELS = 768
+
         const CAMERA_ABOVE_SCREEN = false
         const { x, y, z } = pos
 
@@ -74,15 +81,15 @@
           (movementScaling * (dotDistanceInMM / 2.0 / Math.tan(angle))) /
           screenHeightinMM;
 
-        const headX = (movementScaling *  Math.Sin(radiansPerPixel * (x - CAMERA_WIDTH_PIXELS / 2)) * headDist)
+        const headX = (movementScaling *  Math.sin(radiansPerPixel * (x - CAMERA_WIDTH_PIXELS / 2)) * headDist)
 
         const relativeVerticalAngle = (y - CAMERA_HEIGHT_PIXELS / 2) * radiansPerPixel
 
         let headY
         if (CAMERA_ABOVE_SCREEN) {
-          headY = 0.5 + (movementScaling * Math.Sin(relativeVerticalAngle + cameraVerticaleAngle)  *headDist)
+          headY = 0.5 + (movementScaling * Math.sin(relativeVerticalAngle + cameraVerticaleAngle)  *headDist)
         } else {
-          headY = -0.5 + (movementScaling * Math.Sin(relativeVerticalAngle + cameraVerticaleAngle) * headDist)
+          headY = -0.5 + (movementScaling * Math.sin(relativeVerticalAngle + cameraVerticaleAngle) * headDist)
         }
 
 
@@ -90,7 +97,7 @@
         // // 9 == 4..16
         // // 500 == 400..900
         // const r = (val * 13) / 500;
-        // console.log(pos.z, r);
+        // console.log(`${pos.x}, ${pos.y}, ${pos.z}`);
         // camera.position.z = 4 + (16 - r);
         // console.log(headDist);
         camera.position.x = headX;
