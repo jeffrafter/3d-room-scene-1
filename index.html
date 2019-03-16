@@ -76,32 +76,32 @@
       // camera.position.x = 1.7;
 
       socket.on("pos", function(pos) {
-        // console.log('got pos')
+        const CAM_WIDTH_FOR_Z = 1024
 
-        // NOTE: this should change soon... to 560 and 420
         const CAMERA_WIDTH_PIXELS = 560
         const CAMERA_HEIGHT_PIXELS = 420
 
         const CAMERA_ABOVE_SCREEN = false
-        const { x, y, z } = pos
-
-        const pointDist = 1023 - z;
 
         let dotDistanceInMM = 8.5 * 25.4; //width of the wii sensor bar
-        let screenHeightinMM = (20.0 * 25.4) / 2.0;// probably change this
-        let radiansPerPixel = Math.PI / 4.0 / CAMERA_WIDTH_PIXELS; //45 degree field of view with a 1024x768 camera
+        let screenHeightinMM = (13.0 * 25.4) // set to Tyler's 13 inch tall monitor
+        const radiansPerPixelForZ = Math.PI / 4.0 / CAM_WIDTH_FOR_Z; //45 degree field of view with a 1024x768 camera
+        const radiansPerPixelForXY = Math.PI / 4.0 / CAMERA_WIDTH_PIXELS; //45 degree field of view with a 1024x768 camera
         let movementScaling = 1.0;
 
-        let angle = (radiansPerPixel * pointDist) / 2;
+        const { x, y, z } = pos
+        const pointDist = CAM_WIDTH_FOR_Z - z;
+
+        let angle = (radiansPerPixelForZ * pointDist) / 2;
 
         //in units of screen hieght since the box is a unit cube and box hieght is 1
         const headDist =
           (movementScaling * (dotDistanceInMM / 2.0 / Math.tan(angle))) /
           screenHeightinMM;
 
-        const headX = (movementScaling *  Math.sin(radiansPerPixel * (x - CAMERA_WIDTH_PIXELS / 2)) * headDist)
+        const headX = (movementScaling *  Math.sin(radiansPerPixelForXY * (x - CAMERA_WIDTH_PIXELS / 2)) * headDist)
 
-        const relativeVerticalAngle = (y - CAMERA_HEIGHT_PIXELS / 2) * radiansPerPixel
+        const relativeVerticalAngle = (y - CAMERA_HEIGHT_PIXELS / 2) * radiansPerPixelForXY
 
         let headY
         if (CAMERA_ABOVE_SCREEN) {
