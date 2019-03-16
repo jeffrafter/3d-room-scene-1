@@ -51,6 +51,10 @@
       var cube = new THREE.Mesh(geometry, material);
       scene.add(cube);
 
+      // something helpful
+      var axesHelper = new THREE.AxesHelper( 5 );
+      scene.add( axesHelper );
+
       camera.position.z = 5;
 
       const cameraVerticaleAngle = 0; //begins assuming the camera is point straight forward
